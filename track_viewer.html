@@ -819,8 +819,8 @@
 
       function formatSpeed(mps) {
         if (!Number.isFinite(mps)) return "—";
-        const kmh = mps * 3.6;
-        return `${mps.toFixed(1)} m/s · ${kmh.toFixed(0)} km/h`;
+        const mph = mps * 2.2369362920544;
+        return `${mps.toFixed(1)} m/s · ${mph.toFixed(0)} mph`;
       }
 
       function setTime(ms, fromUser) {
