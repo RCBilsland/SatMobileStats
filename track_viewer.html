@@ -303,7 +303,7 @@
       color: #04140e;
       border-color: transparent;
       font-weight: 700;
-      min-width: 96px;
+      min-width: 2.75rem;
     }
 
     button:disabled {
@@ -412,7 +412,7 @@
     <div class="controls">
       <button id="trackBackBtn" type="button" title="Jump to previous Asterisk or away block" aria-label="Track back">⏮</button>
       <button id="stepBackBtn" type="button" title="Step back one point" aria-label="Step back">◀</button>
-      <button id="playBtn" class="primary" type="button">Play</button>
+      <button id="playBtn" class="primary" type="button" title="Play" aria-label="Play">▶</button>
       <button id="stepFwdBtn" type="button" title="Step forward one point" aria-label="Step forward">▶</button>
       <button id="trackFwdBtn" type="button" title="Jump to next Asterisk or away block" aria-label="Track forward">⏭</button>
       <button id="resetBtn" type="button">Reset</button>
@@ -960,17 +960,23 @@
         raf = requestAnimationFrame(frame);
       }
 
+      function setPlayButton(isPlaying) {
+        playBtn.textContent = isPlaying ? "⏸" : "▶";
+        playBtn.title = isPlaying ? "Pause" : "Play";
+        playBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
+      }
+
       function startPlayback() {
         if (currentMs >= endMs) setTime(startMs, false);
         playing = true;
-        playBtn.textContent = "Pause";
+        setPlayButton(true);
         lastFrame = null;
         raf = requestAnimationFrame(frame);
       }
 
       function stopPlayback() {
         playing = false;
-        playBtn.textContent = "Play";
+        setPlayButton(false);
         if (raf) cancelAnimationFrame(raf);
         raf = null;
         lastFrame = null;
