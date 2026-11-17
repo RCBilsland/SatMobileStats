@@ -410,9 +410,11 @@
       <input id="scrubber" type="range" min="0" max="1000" value="0" step="1" tabindex="-1" aria-hidden="true" />
     </div>
     <div class="controls">
+      <button id="trackBackBtn" type="button" title="Jump to previous Asterisk or away block">Track back</button>
       <button id="stepBackBtn" type="button" title="Step back one point" aria-label="Step back">◀</button>
       <button id="playBtn" class="primary" type="button">Play</button>
       <button id="stepFwdBtn" type="button" title="Step forward one point" aria-label="Step forward">▶</button>
+      <button id="trackFwdBtn" type="button" title="Jump to next Asterisk or away block">Track forward</button>
       <button id="resetBtn" type="button">Reset</button>
       <label>
         Playback
@@ -755,9 +757,26 @@
 
       const scrubber = document.getElementById("scrubber");
       const playBtn = document.getElementById("playBtn");
+      const trackBackBtn = document.getElementById("trackBackBtn");
       const stepBackBtn = document.getElementById("stepBackBtn");
       const stepFwdBtn = document.getElementById("stepFwdBtn");
+      const trackFwdBtn = document.getElementById("trackFwdBtn");
       const resetBtn = document.getElementById("resetBtn");
+
+      const interestBlocks = [
+        ...awaySegments.map((seg) => ({
+          start_ts: seg.start_ts,
+          end_ts: seg.end_ts,
+          kind: "away",
+          label: `Away ${seg.start.slice(11, 19)}–${seg.end.slice(11, 19)}`,
+        })),
+        ...asteriskSegments.map((seg) => ({
+          start_ts: seg.start_ts,
+          end_ts: seg.end_ts,
+          kind: "asterisk",
+          label: `Asterisk ${seg.start.slice(11, 19)}–${seg.end.slice(11, 19)}`,
+        })),
+      ].sort((a, b) => a.start_ts - b.start_ts || a.end_ts - b.end_ts);
       const speedSel = document.getElementById("speed");
       const followChk = document.getElementById("follow");
       const currentTimeEl = document.getElementById("currentTime");
@@ -860,6 +879,8 @@
         updateCharts(currentMs);
         stepBackBtn.disabled = pointNumber <= 1;
         stepFwdBtn.disabled = pointNumber >= points.length;
+        trackBackBtn.disabled = !previousInterestBlock(currentMs);
+        trackFwdBtn.disabled = !nextInterestBlock(currentMs);
 
         if (followChk.checked) {
           map.panTo([lat, lon], { animate: false });
@@ -883,6 +904,40 @@
           points.length - 1
         );
         setTime(points[next].ts, true);
+      }
+
+      function nextInterestBlock(ms) {
+        const epsilon = 250;
+        for (const block of interestBlocks) {
+          if (block.start_ts > ms + epsilon) return block;
+        }
+        return null;
+      }
+
+      function previousInterestBlock(ms) {
+        const epsilon = 250;
+        let previous = null;
+        for (const block of interestBlocks) {
+          if (block.start_ts < ms - epsilon) previous = block;
+          else break;
+        }
+        return previous;
+      }
+
+      function jumpInterest(delta) {
+        stopPlayback();
+        const block =
+          delta > 0 ? nextInterestBlock(currentMs) : previousInterestBlock(currentMs);
+        if (!block) return;
+        setTime(block.start_ts, true);
+        if (followChk.checked) {
+          const { i, t } = findSegment(block.start_ts);
+          const a = points[i];
+          const b = points[Math.min(i + 1, points.length - 1)];
+          map.panTo([lerp(a.lat, b.lat, t), lerp(a.lon, b.lon, t)], {
+            animate: true,
+          });
+        }
       }
 
       function effectiveSpeed() {
@@ -926,6 +981,8 @@
 
       stepBackBtn.addEventListener("click", () => stepPoint(-1));
       stepFwdBtn.addEventListener("click", () => stepPoint(1));
+      trackBackBtn.addEventListener("click", () => jumpInterest(-1));
+      trackFwdBtn.addEventListener("click", () => jumpInterest(1));
 
       window.addEventListener("keydown", (event) => {
         if (event.metaKey || event.ctrlKey || event.altKey) return;
@@ -937,6 +994,12 @@
         } else if (event.key === "ArrowRight") {
           event.preventDefault();
           stepPoint(1);
+        } else if (event.key === "[") {
+          event.preventDefault();
+          jumpInterest(-1);
+        } else if (event.key === "]") {
+          event.preventDefault();
+          jumpInterest(1);
         }
       });
 
