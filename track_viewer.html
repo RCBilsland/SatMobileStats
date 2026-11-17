@@ -307,15 +307,17 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.92rem;
-      line-height: 1;
-      letter-spacing: -0.06em;
       color: #fff;
       background: rgba(255, 255, 255, 0.04);
       border: 1px solid var(--panel-border);
       border-radius: 999px;
-      font-variant-emoji: text;
-      font-weight: 500;
+    }
+
+    .transport button svg {
+      width: 1.15rem;
+      height: 1.15rem;
+      display: block;
+      flex: 0 0 auto;
     }
 
     button:hover, select:hover,
@@ -429,11 +431,21 @@
     </div>
     <div class="controls">
       <div class="transport" role="group" aria-label="Playback">
-        <button id="trackBackBtn" type="button" title="Jump to previous Asterisk or away block" aria-label="Track back">⏮︎</button>
-        <button id="stepBackBtn" type="button" title="Step back one point" aria-label="Step back">◀◀</button>
-        <button id="playBtn" type="button" title="Play" aria-label="Play">▶</button>
-        <button id="stepFwdBtn" type="button" title="Step forward one point" aria-label="Step forward">▶▶</button>
-        <button id="trackFwdBtn" type="button" title="Jump to next Asterisk or away block" aria-label="Track forward">⏭︎</button>
+        <button id="trackBackBtn" type="button" title="Jump to previous Asterisk or away block" aria-label="Track back">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6 5h2.4v14H6V5zm12.2 0v14L9.4 12l8.8-7z"/></svg>
+        </button>
+        <button id="stepBackBtn" type="button" title="Step back one point" aria-label="Step back">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M11.8 5v14L3.2 12l8.6-7zm9 0v14L12.2 12l8.6-7z"/></svg>
+        </button>
+        <button id="playBtn" type="button" title="Play" aria-label="Play">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 5.2v13.6L19.2 12 8 5.2z"/></svg>
+        </button>
+        <button id="stepFwdBtn" type="button" title="Step forward one point" aria-label="Step forward">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M3.2 5v14l8.6-7L3.2 5zm9 0v14l8.6-7-8.6-7z"/></svg>
+        </button>
+        <button id="trackFwdBtn" type="button" title="Jump to next Asterisk or away block" aria-label="Track forward">
+          <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M5.8 5l8.8 7-8.8 7V5zM15.6 5H18v14h-2.4V5z"/></svg>
+        </button>
       </div>
       <button id="resetBtn" type="button">Reset</button>
       <label>
@@ -980,8 +992,13 @@
         raf = requestAnimationFrame(frame);
       }
 
+      const playIcon =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M8 5.2v13.6L19.2 12 8 5.2z"/></svg>';
+      const pauseIcon =
+        '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M6.4 5h3.8v14H6.4V5zm7.4 0h3.8v14h-3.8V5z"/></svg>';
+
       function setPlayButton(isPlaying) {
-        playBtn.textContent = isPlaying ? "⏸︎" : "▶";
+        playBtn.innerHTML = isPlaying ? pauseIcon : playIcon;
         playBtn.title = isPlaying ? "Pause" : "Play";
         playBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
       }
