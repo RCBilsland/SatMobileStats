@@ -284,6 +284,12 @@
       margin-top: 12px;
     }
 
+    .transport {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     button, select {
       font: inherit;
       border: 1px solid var(--panel-border);
@@ -294,19 +300,31 @@
       cursor: pointer;
     }
 
-    button:hover, select:hover {
+    .transport button {
+      width: 2.6rem;
+      height: 2.6rem;
+      padding: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.92rem;
+      line-height: 1;
+      letter-spacing: -0.06em;
+      color: #fff;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      font-variant-emoji: text;
+      font-weight: 500;
+    }
+
+    button:hover, select:hover,
+    .transport button:hover:not(:disabled) {
       border-color: rgba(61, 220, 151, 0.55);
     }
 
-    button.primary {
-      background: linear-gradient(180deg, var(--accent), var(--accent-dim));
-      color: #04140e;
-      border-color: transparent;
-      font-weight: 700;
-      min-width: 2.75rem;
-    }
-
-    button:disabled {
+    button:disabled,
+    .transport button:disabled {
       opacity: 0.35;
       cursor: default;
     }
@@ -410,11 +428,13 @@
       <input id="scrubber" type="range" min="0" max="1000" value="0" step="1" tabindex="-1" aria-hidden="true" />
     </div>
     <div class="controls">
-      <button id="trackBackBtn" type="button" title="Jump to previous Asterisk or away block" aria-label="Track back">⏮</button>
-      <button id="stepBackBtn" type="button" title="Step back one point" aria-label="Step back">◀◀</button>
-      <button id="playBtn" class="primary" type="button" title="Play" aria-label="Play">▶</button>
-      <button id="stepFwdBtn" type="button" title="Step forward one point" aria-label="Step forward">▶▶</button>
-      <button id="trackFwdBtn" type="button" title="Jump to next Asterisk or away block" aria-label="Track forward">⏭</button>
+      <div class="transport" role="group" aria-label="Playback">
+        <button id="trackBackBtn" type="button" title="Jump to previous Asterisk or away block" aria-label="Track back">⏮︎</button>
+        <button id="stepBackBtn" type="button" title="Step back one point" aria-label="Step back">◀◀</button>
+        <button id="playBtn" type="button" title="Play" aria-label="Play">▶</button>
+        <button id="stepFwdBtn" type="button" title="Step forward one point" aria-label="Step forward">▶▶</button>
+        <button id="trackFwdBtn" type="button" title="Jump to next Asterisk or away block" aria-label="Track forward">⏭︎</button>
+      </div>
       <button id="resetBtn" type="button">Reset</button>
       <label>
         Playback
@@ -961,7 +981,7 @@
       }
 
       function setPlayButton(isPlaying) {
-        playBtn.textContent = isPlaying ? "⏸" : "▶";
+        playBtn.textContent = isPlaying ? "⏸︎" : "▶";
         playBtn.title = isPlaying ? "Pause" : "Play";
         playBtn.setAttribute("aria-label", isPlaying ? "Pause" : "Play");
       }
