@@ -3,3 +3,9 @@ __pycache__/
 .DS_Store
 .venv/
 venv/
+
+# Local analysis inputs/outputs — not needed for the hosted viewer
+*.csv
+*.txt
+*.kml
+*.py
