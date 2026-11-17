@@ -4,7 +4,7 @@ Local analysis and map playback for a satellite/mobile drone test over public ma
 
 ## Live viewer
 
-https://rbilsland.github.io/SatMobileStats/
+https://rcbilsland.github.io/SatMobileStats/
 
 Or open `track_viewer.html` locally (needs `track_points.js` beside it).
 
